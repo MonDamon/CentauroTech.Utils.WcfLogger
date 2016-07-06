@@ -1,0 +1,38 @@
+<?xml version="1.0"?>
+<package >
+  <metadata>
+    <id>$id$</id>
+    <version>$version$</version>
+    <title>$title$</title>
+    <authors>$author$</authors>
+    <owners>$author$</owners>
+    <licenseUrl>https://opensource.org/licenses/GPL-3.0</licenseUrl>
+    <projectUrl>https://github.com/CentauroTech/CentauroTech.Utils.WcfLogger</projectUrl>
+    <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>
+    <requireLicenseAcceptance>true</requireLicenseAcceptance>
+    <description>Nuget package to log requests made during WCF request.</description>
+    <summary>Nuget package to log requests made during WCF request.</summary>
+    <copyright>Copyright © CentauroTech 2016</copyright>
+    <tags>log4net log wcf</tags>
+    <references>
+      <reference file="CentauroTech.Utils.WcfLogger.dll" />
+    </references>
+  </metadata>
+  <files>
+    <!--.net 4.5 support-->
+    <file src="CentauroTech.Utils.WcfLogger.dll" target="lib\net45" />
+    <file src="CentauroTech.Utils.WcfLogger.xml" target="lib\net45" />
+    <!--.net 4.5.1 support-->
+    <file src="CentauroTech.Utils.WcfLogger.dll" target="lib\net451" />
+    <file src="CentauroTech.Utils.WcfLogger.xml" target="lib\net451" />
+    <!--.net 4.5.2 support-->
+    <file src="CentauroTech.Utils.WcfLogger.dll" target="lib\net452" />
+    <file src="CentauroTech.Utils.WcfLogger.xml" target="lib\net452" />
+    <!--.net 4.6 support-->
+    <file src="CentauroTech.Utils.WcfLogger.dll" target="lib\net46" />
+    <file src="CentauroTech.Utils.WcfLogger.xml" target="lib\net46" />
+    <!--.net 4.6.1 support-->
+    <file src="CentauroTech.Utils.WcfLogger.dll" target="lib\net461" />
+    <file src="CentauroTech.Utils.WcfLogger.xml" target="lib\net461" />
+  </files>
+</package>
