@@ -95,11 +95,12 @@ namespace CentauroTech.Utils.WcfLogger
                 {
                     Logger.Debug(logMessage);
                 }
+                catch (AggregateException ex)
+                {
+                    Logger.Error("Erro ao gerar log da resposta: " + ex.Message, ex.InnerException);
+                }
                 catch (Exception ex)
                 {
-                    if (ex is AggregateException)
-                        ex = ex.InnerException;
-
                     Logger.Error("Erro ao gerar log da resposta: " + ex.Message, ex);
                 }
             }

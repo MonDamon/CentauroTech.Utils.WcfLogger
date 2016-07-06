@@ -11,7 +11,8 @@ namespace CentauroTech.Utils.WcfLogger
     /// <summary>
     /// The behaviour that should be used to log the messages on a WCF communication.
     /// </summary>
-    public class LogBehavior : Attribute, IServiceBehavior, IEndpointBehavior
+    [AttributeUsage(AttributeTargets.Class)]
+    public sealed class LogBehaviorAttribute : Attribute, IServiceBehavior, IEndpointBehavior
     {
 
         #region Public Methods
@@ -43,9 +44,13 @@ namespace CentauroTech.Utils.WcfLogger
         /// </summary>
         /// <param name="endpoint">The endpoint that is to be customized.</param>
         /// <param name="clientRuntime">The client runtime to be customized.</param>
+        /// <exception cref="ArgumentNullException">If clientRuntime is null</exception>
         /// <remarks>Not implemented.</remarks>
         public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
+            if (clientRuntime == null)
+                throw new ArgumentNullException("clientRuntime");
+
             clientRuntime.MessageInspectors.Add(new LogMessageInspector());
         }
 
@@ -54,8 +59,12 @@ namespace CentauroTech.Utils.WcfLogger
         /// </summary>
         /// <param name="serviceDescription">The service description.</param>
         /// <param name="serviceHostBase"> The host that is currently being built.</param>
+        /// <exception cref="ArgumentNullException">If serviceHostBase is null</exception>
         public void ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
         {
+            if (serviceHostBase == null)
+                throw new ArgumentNullException("serviceHostBase");
+
             serviceHostBase.ChannelDispatchers
                 .Where(cd => cd is ChannelDispatcher)
                 .Select(cd => cd as ChannelDispatcher)
