@@ -8,7 +8,6 @@
     <owners>$author$</owners>
     <licenseUrl>https://opensource.org/licenses/GPL-3.0</licenseUrl>
     <projectUrl>https://github.com/CentauroTech/CentauroTech.Utils.WcfLogger</projectUrl>
-    <iconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</iconUrl>
     <requireLicenseAcceptance>true</requireLicenseAcceptance>
     <description>Nuget package to log requests made during WCF request.</description>
     <summary>Nuget package to log requests made during WCF request.</summary>
