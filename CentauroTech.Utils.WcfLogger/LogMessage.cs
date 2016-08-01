@@ -32,10 +32,14 @@ namespace CentauroTech.Utils.WcfLogger
         {
             get
             {
-                using (XmlDictionaryReader reader = Message.GetReaderAtBodyContents())
+                if (!Message.IsEmpty)
                 {
-                    return reader.ReadOuterXml();
+                    using (XmlDictionaryReader reader = Message.GetReaderAtBodyContents())
+                    {
+                        return reader.ReadOuterXml();
+                    }
                 }
+                return null;
             }
         }
 

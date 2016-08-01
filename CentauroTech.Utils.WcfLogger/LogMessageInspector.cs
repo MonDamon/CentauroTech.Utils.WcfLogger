@@ -96,18 +96,21 @@ namespace CentauroTech.Utils.WcfLogger
         {
             if (Logger.IsDebugEnabled)
             {
-                try
+                var logTask = new Task(() =>
                 {
-                    var logTask = new Task(() => { Logger.Debug(logMessage.ToString()); });
-                    logTask.Start();
-                }
-                catch (Exception ex)
-                {
-                    if (ex is AggregateException)
-                        ex = ex.InnerException;
+                    try
+                    {
+                        Logger.Debug(logMessage.ToString());
+                    }
+                    catch (Exception ex)
+                    {
+                        if (ex is AggregateException)
+                            ex = ex.InnerException;
 
-                    Logger.Error("Erro ao gerar log da resposta: " + ex.Message, ex);
-                }
+                        Logger.Error("Erro ao gerar log da resposta: " + ex.Message, ex);
+                    }
+                });
+                logTask.Start();
             }
         }
 
