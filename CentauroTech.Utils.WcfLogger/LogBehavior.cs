@@ -1,4 +1,5 @@
-﻿using System;
+﻿using log4net;
+using System;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.ServiceModel;
@@ -14,6 +15,33 @@ namespace CentauroTech.Utils.WcfLogger
     [AttributeUsage(AttributeTargets.Class)]
     public sealed class LogBehaviorAttribute : Attribute, IServiceBehavior, IEndpointBehavior
     {
+        #region Private Fields
+
+        private ILog _logger;
+
+        #endregion Private Fields
+
+        #region Private Properties
+
+        private ILog Logger
+        {
+            get { return _logger ?? (_logger = LogManager.GetLogger(typeof(LogBehaviorAttribute))); }
+            set { _logger = value; }
+        }
+
+        #endregion Private Properties
+
+        #region Public Constructors
+
+        /// <summary>
+        /// Default constructor
+        /// </summary>
+        public LogBehaviorAttribute()
+        {
+            Logger.Debug("Constructing LogBehaviorAttribute.");
+        }
+
+        #endregion Public Constructors
 
         #region Public Methods
 
@@ -25,6 +53,7 @@ namespace CentauroTech.Utils.WcfLogger
         /// <remarks>Not implemented.</remarks>
         public void AddBindingParameters(ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
         {
+            Logger.Debug("Executing: AddBindingParameters(ServiceEndpoint, BindingParameterCollection)");
         }
 
 
@@ -37,6 +66,7 @@ namespace CentauroTech.Utils.WcfLogger
         /// <param name="bindingParameters">Custom objects to which binding elements have access.</param>
         public void AddBindingParameters(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase, Collection<ServiceEndpoint> endpoints, BindingParameterCollection bindingParameters)
         {
+            Logger.Debug("Executing: AddBindingParameters(ServiceDescription, ServiceHostBase, Collection<ServiceEndpoint>, BindingParameterCollection)");
         }
 
         /// <summary>
@@ -48,6 +78,8 @@ namespace CentauroTech.Utils.WcfLogger
         /// <remarks>Not implemented.</remarks>
         public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
+            Logger.Debug("Executing: ApplyClientBehavior(ServiceEndpoint, ClientRuntime)");
+
             if (clientRuntime == null)
                 throw new ArgumentNullException("clientRuntime");
 
@@ -62,6 +94,8 @@ namespace CentauroTech.Utils.WcfLogger
         /// <exception cref="ArgumentNullException">If serviceHostBase is null</exception>
         public void ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
         {
+            Logger.Debug("Executing: ApplyDispatchBehavior(ServiceDescription, ServiceHostBase)");
+
             if (serviceHostBase == null)
                 throw new ArgumentNullException("serviceHostBase");
 
@@ -86,6 +120,13 @@ namespace CentauroTech.Utils.WcfLogger
         /// <remarks>Not implemented.</remarks>
         public void ApplyDispatchBehavior(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
         {
+            Logger.Debug("Executing: ApplyDispatchBehavior(ServiceEndpoint, EndpointDispatcher)");
+
+            if (endpointDispatcher == null)
+                throw new ArgumentNullException("endpointDispatcher");
+
+            var inspector = new LogMessageInspector();
+            endpointDispatcher.DispatchRuntime.MessageInspectors.Add(inspector);
         }
 
         /// <summary>
@@ -95,6 +136,7 @@ namespace CentauroTech.Utils.WcfLogger
         /// <remarks>Not implemented.</remarks>
         public void Validate(ServiceEndpoint endpoint)
         {
+            Logger.Debug("Executing: Validate(ServiceEndpoint)");
         }
 
         /// <summary>
@@ -105,6 +147,7 @@ namespace CentauroTech.Utils.WcfLogger
         /// <remarks>Not implemented.</remarks>
         public void Validate(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
         {
+            Logger.Debug("Executing: Validate(ServiceDescription, ServiceHostBase)");
         }
 
         #endregion Public Methods
