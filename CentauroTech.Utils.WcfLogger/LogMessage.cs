@@ -5,6 +5,7 @@ namespace CentauroTech.Utils.WcfLogger
     /// <summary>
     /// The log message that will be created when logging a request.
     /// </summary>
+    [Serializable]
     public class LogMessage
     {
 
@@ -24,6 +25,15 @@ namespace CentauroTech.Utils.WcfLogger
         /// The output request object.
         /// </summary>
         public dynamic OutputObject { get; set; }
+
+        /// <summary>
+        /// Override of the ToStringMethod to serialize the object using Json.
+        /// </summary>
+        /// <returns>The JSON strng of the LogMessage object</returns>
+        public override string ToString()
+        {
+            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+        }
 
         #endregion Public Properties
 

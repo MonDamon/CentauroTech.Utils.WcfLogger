@@ -3,6 +3,7 @@ using System;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Dispatcher;
+using System.Threading.Tasks;
 
 namespace CentauroTech.Utils.WcfLogger
 {
@@ -93,14 +94,16 @@ namespace CentauroTech.Utils.WcfLogger
             {
                 try
                 {
-                    Logger.Debug(logMessage);
-                }
-                catch (AggregateException ex)
-                {
-                    Logger.Error("Erro ao gerar log da resposta: " + ex.Message, ex.InnerException);
+                    using (var logTask = new Task(() => { Logger.Debug(logMessage.ToString()); }))
+                    {
+                        logTask.Start();
+                    }
                 }
                 catch (Exception ex)
                 {
+                    if (ex is AggregateException)
+                        ex = ex.InnerException;
+
                     Logger.Error("Erro ao gerar log da resposta: " + ex.Message, ex);
                 }
             }

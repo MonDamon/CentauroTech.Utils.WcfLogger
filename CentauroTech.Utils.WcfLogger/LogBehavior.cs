@@ -15,13 +15,33 @@ namespace CentauroTech.Utils.WcfLogger
     [AttributeUsage(AttributeTargets.Class)]
     public sealed class LogBehaviorAttribute : Attribute, IServiceBehavior, IEndpointBehavior
     {
+
         #region Private Fields
 
+        private bool? _logExecution;
         private ILog _logger;
 
         #endregion Private Fields
 
         #region Private Properties
+
+        private bool LogExecution
+        {
+            get
+            {
+                if (!_logExecution.HasValue)
+                {
+                    var setting = System.Configuration.ConfigurationManager.AppSettings["WcfLogger.Internal.Debug"];
+                    bool logExecution = false;
+
+                    if (!bool.TryParse(setting, out logExecution))
+                        logExecution = false;
+
+                    _logExecution = logExecution;
+                }
+                return _logExecution.Value;
+            }
+        }
 
         private ILog Logger
         {
@@ -38,7 +58,8 @@ namespace CentauroTech.Utils.WcfLogger
         /// </summary>
         public LogBehaviorAttribute()
         {
-            Logger.Debug("Constructing LogBehaviorAttribute.");
+            if (LogExecution)
+                Logger.Debug("Constructing LogBehaviorAttribute.");
         }
 
         #endregion Public Constructors
@@ -53,7 +74,9 @@ namespace CentauroTech.Utils.WcfLogger
         /// <remarks>Not implemented.</remarks>
         public void AddBindingParameters(ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
         {
-            Logger.Debug("Executing: AddBindingParameters(ServiceEndpoint, BindingParameterCollection)");
+
+            if (LogExecution)
+                Logger.Debug("Executing: AddBindingParameters(ServiceEndpoint, BindingParameterCollection)");
         }
 
 
@@ -66,7 +89,9 @@ namespace CentauroTech.Utils.WcfLogger
         /// <param name="bindingParameters">Custom objects to which binding elements have access.</param>
         public void AddBindingParameters(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase, Collection<ServiceEndpoint> endpoints, BindingParameterCollection bindingParameters)
         {
-            Logger.Debug("Executing: AddBindingParameters(ServiceDescription, ServiceHostBase, Collection<ServiceEndpoint>, BindingParameterCollection)");
+
+            if (LogExecution)
+                Logger.Debug("Executing: AddBindingParameters(ServiceDescription, ServiceHostBase, Collection<ServiceEndpoint>, BindingParameterCollection)");
         }
 
         /// <summary>
@@ -78,7 +103,8 @@ namespace CentauroTech.Utils.WcfLogger
         /// <remarks>Not implemented.</remarks>
         public void ApplyClientBehavior(ServiceEndpoint endpoint, ClientRuntime clientRuntime)
         {
-            Logger.Debug("Executing: ApplyClientBehavior(ServiceEndpoint, ClientRuntime)");
+            if (LogExecution)
+                Logger.Debug("Executing: ApplyClientBehavior(ServiceEndpoint, ClientRuntime)");
 
             if (clientRuntime == null)
                 throw new ArgumentNullException("clientRuntime");
@@ -94,7 +120,8 @@ namespace CentauroTech.Utils.WcfLogger
         /// <exception cref="ArgumentNullException">If serviceHostBase is null</exception>
         public void ApplyDispatchBehavior(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
         {
-            Logger.Debug("Executing: ApplyDispatchBehavior(ServiceDescription, ServiceHostBase)");
+            if (LogExecution)
+                Logger.Debug("Executing: ApplyDispatchBehavior(ServiceDescription, ServiceHostBase)");
 
             if (serviceHostBase == null)
                 throw new ArgumentNullException("serviceHostBase");
@@ -120,7 +147,8 @@ namespace CentauroTech.Utils.WcfLogger
         /// <remarks>Not implemented.</remarks>
         public void ApplyDispatchBehavior(ServiceEndpoint endpoint, EndpointDispatcher endpointDispatcher)
         {
-            Logger.Debug("Executing: ApplyDispatchBehavior(ServiceEndpoint, EndpointDispatcher)");
+            if (LogExecution)
+                Logger.Debug("Executing: ApplyDispatchBehavior(ServiceEndpoint, EndpointDispatcher)");
 
             if (endpointDispatcher == null)
                 throw new ArgumentNullException("endpointDispatcher");
@@ -136,7 +164,8 @@ namespace CentauroTech.Utils.WcfLogger
         /// <remarks>Not implemented.</remarks>
         public void Validate(ServiceEndpoint endpoint)
         {
-            Logger.Debug("Executing: Validate(ServiceEndpoint)");
+            if (LogExecution)
+                Logger.Debug("Executing: Validate(ServiceEndpoint)");
         }
 
         /// <summary>
@@ -147,7 +176,8 @@ namespace CentauroTech.Utils.WcfLogger
         /// <remarks>Not implemented.</remarks>
         public void Validate(ServiceDescription serviceDescription, ServiceHostBase serviceHostBase)
         {
-            Logger.Debug("Executing: Validate(ServiceDescription, ServiceHostBase)");
+            if (LogExecution)
+                Logger.Debug("Executing: Validate(ServiceDescription, ServiceHostBase)");
         }
 
         #endregion Public Methods
