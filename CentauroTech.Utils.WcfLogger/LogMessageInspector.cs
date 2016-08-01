@@ -40,9 +40,7 @@ namespace CentauroTech.Utils.WcfLogger
         /// <param name="correlationState">Correlation state data.</param>
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
-            _logMessage.Identifier = _identifier;
-            _logMessage.Message = reply;
-            LogMessage(_logMessage);
+            CopyMessageAndDebug(ref reply);
         }
 
         /// <summary>
@@ -54,9 +52,7 @@ namespace CentauroTech.Utils.WcfLogger
         /// <returns>The object used to correlate state. This object is passed back in the System.ServiceModel.Dispatcher.IDispatchMessageInspector.BeforeSendReply(System.ServiceModel.Channels.Message@,System.Object) method.</returns>
         public object AfterReceiveRequest(ref Message request, IClientChannel channel, InstanceContext instanceContext)
         {
-            _logMessage.Identifier = _identifier;
-            _logMessage.Message = request;
-            LogMessage(_logMessage);
+            CopyMessageAndDebug(ref request);
             return null;
         }
 
@@ -67,9 +63,7 @@ namespace CentauroTech.Utils.WcfLogger
         /// <param name="correlationState">The correlation object returned from the System.ServiceModel.Dispatcher.IDispatchMessageInspector.AfterReceiveRequest(System.ServiceModel.Channels.Message@,System.ServiceModel.IClientChannel,System.ServiceModel.InstanceContext) method.</param>
         public void BeforeSendReply(ref Message reply, object correlationState)
         {
-            _logMessage.Identifier = _identifier;
-            _logMessage.Message = reply;
-            LogMessage(_logMessage);
+            CopyMessageAndDebug(ref reply);
         }
 
         /// <summary>
@@ -80,9 +74,7 @@ namespace CentauroTech.Utils.WcfLogger
         /// <returns> The object that is returned as the correlationState argument of the System.ServiceModel.Dispatcher.IClientMessageInspector.AfterReceiveReply(System.ServiceModel.Channels.Message@,System.Object) method. This is null if no correlation state is used.The best practice is to make this a System.Guid to ensure that no two correlationState objects are the same.</returns>
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
-            _logMessage.Identifier = _identifier;
-            _logMessage.Message = request;
-            LogMessage(_logMessage);
+            CopyMessageAndDebug(ref request);
             return null;
         }
 
@@ -90,28 +82,40 @@ namespace CentauroTech.Utils.WcfLogger
 
         #region Private Methods
 
+        private void CopyMessageAndDebug(ref Message request)
+        {
+            if (Logger.IsDebugEnabled)
+            {
+                MessageBuffer buffer = request.CreateBufferedCopy(Int32.MaxValue);
+                request = buffer.CreateMessage();
+
+                _logMessage.Identifier = _identifier;
+                _logMessage.Message = buffer.CreateMessage();
+                LogMessage(_logMessage);
+            }
+        }
+
         //Supression needed because the log task runs asynchronously and cannot be disposed before the execution ends.
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         private void LogMessage(LogMessage logMessage)
         {
-            if (Logger.IsDebugEnabled)
-            {
-                var logTask = new Task(() =>
-                {
-                    try
-                    {
-                        Logger.Debug(logMessage.ToString());
-                    }
-                    catch (Exception ex)
-                    {
-                        if (ex is AggregateException)
-                            ex = ex.InnerException;
 
-                        Logger.Error("Erro ao gerar log da resposta: " + ex.Message, ex);
-                    }
-                });
-                logTask.Start();
-            }
+            var logTask = new Task(() =>
+            {
+                try
+                {
+                    Logger.Debug(logMessage.ToString());
+                }
+                catch (Exception ex)
+                {
+                    if (ex is AggregateException)
+                        ex = ex.InnerException;
+
+                    Logger.Error("Erro ao gerar log da resposta: " + ex.Message, ex);
+                }
+            });
+            logTask.Start();
+
         }
 
         #endregion Private Methods

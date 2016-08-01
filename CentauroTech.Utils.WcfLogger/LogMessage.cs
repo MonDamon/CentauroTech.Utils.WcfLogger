@@ -15,17 +15,6 @@ namespace CentauroTech.Utils.WcfLogger
         #region Public Properties
 
         /// <summary>
-        /// The identifier of the request and response.
-        /// </summary>
-        public Guid Identifier { get; set; }
-
-        /// <summary>
-        /// The input request object.
-        /// </summary>
-        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
-        public Message Message { get; set; }
-
-        /// <summary>
         /// The body of the message.
         /// </summary>
         public object Body
@@ -44,6 +33,21 @@ namespace CentauroTech.Utils.WcfLogger
         }
 
         /// <summary>
+        /// The identifier of the request and response.
+        /// </summary>
+        public Guid Identifier { get; set; }
+
+        /// <summary>
+        /// The input request object.
+        /// </summary>
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public Message Message { get; set; }
+
+        #endregion Public Properties
+
+        #region Public Methods
+
+        /// <summary>
         /// Override of the ToStringMethod to serialize the object using Json.
         /// </summary>
         /// <returns>The JSON strng of the LogMessage object</returns>
@@ -52,7 +56,7 @@ namespace CentauroTech.Utils.WcfLogger
             return JsonConvert.SerializeObject(this);
         }
 
-        #endregion Public Properties
+        #endregion Public Methods
 
     }
 }
