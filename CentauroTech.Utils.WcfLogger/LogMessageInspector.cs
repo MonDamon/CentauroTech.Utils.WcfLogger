@@ -15,7 +15,7 @@ namespace CentauroTech.Utils.WcfLogger
 
         #region Private Fields
 
-        private Guid _identifier = new Guid();
+        private Guid _identifier = Guid.NewGuid();
         private ILog _logger;
         private LogMessage _logMessage = new LogMessage();
 
@@ -40,7 +40,8 @@ namespace CentauroTech.Utils.WcfLogger
         /// <param name="correlationState">Correlation state data.</param>
         public void AfterReceiveReply(ref Message reply, object correlationState)
         {
-            _logMessage.OutputObject = reply;
+            _logMessage.Identifier = _identifier;
+            _logMessage.Message = reply;
             LogMessage(_logMessage);
         }
 
@@ -54,7 +55,7 @@ namespace CentauroTech.Utils.WcfLogger
         public object AfterReceiveRequest(ref Message request, IClientChannel channel, InstanceContext instanceContext)
         {
             _logMessage.Identifier = _identifier;
-            _logMessage.InputObject = request;
+            _logMessage.Message = request;
             LogMessage(_logMessage);
             return null;
         }
@@ -66,7 +67,8 @@ namespace CentauroTech.Utils.WcfLogger
         /// <param name="correlationState">The correlation object returned from the System.ServiceModel.Dispatcher.IDispatchMessageInspector.AfterReceiveRequest(System.ServiceModel.Channels.Message@,System.ServiceModel.IClientChannel,System.ServiceModel.InstanceContext) method.</param>
         public void BeforeSendReply(ref Message reply, object correlationState)
         {
-            _logMessage.OutputObject = reply;
+            _logMessage.Identifier = _identifier;
+            _logMessage.Message = reply;
             LogMessage(_logMessage);
         }
 
@@ -79,7 +81,7 @@ namespace CentauroTech.Utils.WcfLogger
         public object BeforeSendRequest(ref Message request, IClientChannel channel)
         {
             _logMessage.Identifier = _identifier;
-            _logMessage.InputObject = request;
+            _logMessage.Message = request;
             LogMessage(_logMessage);
             return null;
         }
@@ -88,16 +90,16 @@ namespace CentauroTech.Utils.WcfLogger
 
         #region Private Methods
 
+        //Supression needed because the log task runs asynchronously and cannot be disposed before the execution ends.
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         private void LogMessage(LogMessage logMessage)
         {
             if (Logger.IsDebugEnabled)
             {
                 try
                 {
-                    using (var logTask = new Task(() => { Logger.Debug(logMessage.ToString()); }))
-                    {
-                        logTask.Start();
-                    }
+                    var logTask = new Task(() => { Logger.Debug(logMessage.ToString()); });
+                    logTask.Start();
                 }
                 catch (Exception ex)
                 {

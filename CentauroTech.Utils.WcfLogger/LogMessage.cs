@@ -1,4 +1,7 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
+using System.ServiceModel.Channels;
+using System.Xml;
 
 namespace CentauroTech.Utils.WcfLogger
 {
@@ -19,12 +22,22 @@ namespace CentauroTech.Utils.WcfLogger
         /// <summary>
         /// The input request object.
         /// </summary>
-        public dynamic InputObject { get; set; }
+        [JsonProperty(NullValueHandling = NullValueHandling.Ignore)]
+        public Message Message { get; set; }
 
         /// <summary>
-        /// The output request object.
+        /// The body of the message.
         /// </summary>
-        public dynamic OutputObject { get; set; }
+        public object Body
+        {
+            get
+            {
+                using (XmlDictionaryReader reader = Message.GetReaderAtBodyContents())
+                {
+                    return reader.ReadOuterXml();
+                }
+            }
+        }
 
         /// <summary>
         /// Override of the ToStringMethod to serialize the object using Json.
@@ -32,7 +45,7 @@ namespace CentauroTech.Utils.WcfLogger
         /// <returns>The JSON strng of the LogMessage object</returns>
         public override string ToString()
         {
-            return Newtonsoft.Json.JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this);
         }
 
         #endregion Public Properties
