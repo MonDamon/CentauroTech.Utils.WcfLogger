@@ -15,7 +15,7 @@ More information about the package, please visit:
 https://www.nuget.org/packages/CentauroTech.Utils.WcfLogger
 
 #### Usage:
-Add the message handler to the HttpConfiguration of you web site. The logs will appear wherever your log4net logs are being presented by your app.
+Add the behavior to your WCF client. O the example below we added it to **_Endpoint.EndpointBehariors_** but in some cases depending on the implementations it could appear as **_Endpoint.Behaviors_**.
 
 ```csharp
 using (var client = new WcfWebService())
